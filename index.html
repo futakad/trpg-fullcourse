@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRPG人生のフルコース</title>
+<meta name="description" content="あなたの卓歴を、八品に。遊んだシナリオをコース料理に見立てて書き、画像で保存・Xに投稿できる入力フォーム。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TRPG人生のフルコース">
+<meta property="og:description" content="あなたの卓歴を、八品に。遊んだシナリオをコース料理に見立てて書き、画像で保存・Xに投稿できる入力フォーム。無料。">
+<meta property="og:url" content="https://futakad.github.io/trpg-fullcourse/">
+<meta property="og:image" content="https://futakad.github.io/trpg-fullcourse/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@500;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f3ece0; --panel:#fffaf2; --ink:#3b3127; --sub:#7a6a58; --line:#d9cbb3; --accent:#a8842f; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Zen Kaku Gothic New','Yu Gothic UI','Meiryo',sans-serif; }
+  header.top { padding:16px 16px 4px; }
+  header.top h1 { margin:0; font-family:'Shippori Mincho',serif; font-weight:800; font-size:24px; }
+  header.top p { margin:4px 0 0; font-size:13px; color:var(--sub); }
+  .wrap { display:grid; grid-template-columns:minmax(320px,460px) 1fr; gap:20px; padding:12px 16px 32px; align-items:start; }
+  @media (max-width:860px) { .wrap { grid-template-columns:minmax(0,1fr); } .preview { position:static; } }
+  .wrap > * { min-width:0; }
+  form { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  fieldset { border:none; padding:0; margin:0 0 12px; }
+  legend { font-weight:700; font-size:14px; margin-bottom:6px; }
+  .course { border-top:1px solid var(--line); padding:10px 0 4px; }
+  .course .head { display:flex; align-items:baseline; gap:8px; font-size:14px; font-weight:700; }
+  .course .head small { font-family:'Pinyon Script',cursive; font-weight:400; font-size:17px; color:var(--sub); }
+  .dot { display:inline-block; width:20px; height:20px; border-radius:50%; color:#fff; font-size:12px; line-height:20px; text-align:center; flex:none; }
+  input[type=text], input[type=number] { width:100%; font:inherit; font-size:15px; padding:7px 9px; border:1px solid var(--line); border-radius:5px; margin-top:5px; background:#fff; color:var(--ink); }
+  .row2 { display:grid; grid-template-columns:2fr 1fr; gap:10px; }
+  .buttons { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  button { font:inherit; font-size:15px; padding:10px 14px; border-radius:6px; border:1px solid var(--accent); background:#fff; color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; font-weight:700; }
+  .note { font-size:12px; color:var(--sub); line-height:1.7; margin-top:12px; }
+  .preview { position:sticky; top:12px; }
+  .preview canvas { width:100%; max-width:600px; height:auto; display:block; border-radius:4px; box-shadow:0 2px 12px rgba(0,0,0,.15); }
+  .preview p { font-size:12px; color:var(--sub); margin:6px 0 0; }
+  .share-msg { color:var(--ink); font-weight:700; margin-top:8px; min-height:0; }
+  .share-msg:empty { display:none; }
+  .credit { padding:0 16px 24px; font-size:12px; color:var(--sub); }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>TRPG人生のフルコース</h1>
+  <p>あなたの卓歴を、八品に。書き込むと右の絵がすぐ変わります。できたら「画像を保存」。</p>
+</header>
+
+<div class="wrap">
+  <form id="f" autocomplete="off" onsubmit="return false">
+    <div id="courses"></div>
+    <fieldset class="course">
+      <div class="row2">
+        <label>食べ手（お名前）<input type="text" id="eater" maxlength="24"></label>
+        <label>完成度（％）<input type="number" id="rate" min="0" max="100" step="1"></label>
+      </div>
+    </fieldset>
+    <div class="buttons">
+      <button type="button" class="primary" id="save">画像を保存（PNG）</button>
+      <button type="button" class="primary" id="share">Xに投稿</button>      <button type="button" id="sample">見本を入れる</button>
+      <button type="button" id="clear">すべて消す</button>
+    </div>
+    <p class="note share-msg" id="shareMsg" aria-live="polite"></p>
+    <p class="note">
+      書いた内容は、このブラウザの中だけに保存されます（次に開いたときも残ります）。どこにも送信しません。<br>
+      保存される画像は 1200×1600 px です。SNSにそのまま載せられます。<br>
+      「Xに投稿」を押すと、画像をコピーしてXの投稿画面を開きます。投稿画面で Ctrl+V を押すと画像が貼れます（スマホでは共有の画面が開きます）。<br>
+      文字が長いときは、枠に収まるよう自動で小さくなります。
+    </p>
+  </form>
+
+  <div class="preview">
+    <canvas id="cv" width="1200" height="1600" aria-label="フルコースの仕上がり"></canvas>
+    <p>仕上がりの見本（実際の画像は 1200×1600 px）</p>
+  </div>
+</div>
+<footer class="credit">制作　ふたかど重工（めるぐ魔法書店［ふたかど］）　https://futakad.booth.pm/　X @futakad</footer>
+
+<script>
+// ── 品書き。和名・仏語名・番号の丸の色
+const COURSES = [
+  ['オードブル',     "Hors d'oeuvre",  '#a9523a'],
+  ['スープ',         'Soupe',          '#c48a2a'],
+  ['魚料理',         'Poisson',        '#3e7e8c'],
+  ['肉料理',         'Viande',         '#8a3442'],
+  ['メインディッシュ', 'Plat principal', '#6e3a6e'],
+  ['サラダ',         'Salade',         '#5a8a48'],
+  ['デザート',       'Dessert',        '#c47090'],
+  ['ドリンク',       'Boisson',        '#4a6a9e'],
+];
+const MAIN = 4; // メインディッシュは枠を強調する
+
+// ── 見本（作品名は架空）
+const SAMPLE = {
+  items: [
+    ['霧笛の灯台守',     '潮の香りで食欲がひらきます'],
+    ['午前二時の図書室', '静かで深い味わい'],
+    ['錆びた観覧車',     'ほろ苦さが後を引きます'],
+    ['七番目の客室',     '食べごたえ十分の一皿'],
+    ['赤い月の祭壇',     '忘れられない味。おかわりは無理です'],
+    ['硝子の温室',       'みずみずしくて少し切ない'],
+    ['眠らない港町',     '甘いと思ったら苦かった'],
+    ['最後の晩餐会',     '飲み干すまでに時間がかかります'],
+  ],
+  eater: '名もなき探索者',
+  rate: 80,
+};
+
+// ── 見た目（生成り × 金）
+const T = {
+  bg:'#f1e6d3', bg2:'#e9dcc4', frame:'#a8842f', card:'rgba(255,251,243,.72)', cardLine:'#d8c7a8',
+  mainLine:'#b08a3a', ink:'#3b3127', sub:'#7a6a58', accent:'#a8842f', rule:'#c9b48e', write:'#3b3127',
+  // 題字・品名・書き込みは しっぽり明朝（2026-10-27 社長：デザイン案2）。英題・仏語名・番号・欄の名前はゴシックのまま
+  titleFont:"800 {px}px 'Shippori Mincho', serif", bodyFont:"700 {px}px 'Shippori Mincho', serif",
+  textFont:"500 {px}px 'Shippori Mincho', serif",
+};
+
+// ── 入力欄を作る
+const box = document.getElementById('courses');
+COURSES.forEach((c, i) => {
+  const d = document.createElement('fieldset');
+  d.className = 'course';
+  d.innerHTML = `<div class="head"><span class="dot" style="background:${c[2]}">${i+1}</span>${c[0]} <small>${c[1]}</small></div>
+    <input type="text" id="t${i}" maxlength="40" placeholder="シナリオ名">
+    <input type="text" id="c${i}" maxlength="40" placeholder="ひとこと（味の感想など）">`;
+  box.appendChild(d);
+});
+
+const $ = id => document.getElementById(id);
+const cv = $('cv'), ctx = cv.getContext('2d');
+const KEY = 'fullcourse_v1';
+
+function readForm() {
+  return {
+    items: COURSES.map((_, i) => [$('t'+i).value, $('c'+i).value]),
+    eater: $('eater').value,
+    rate: $('rate').value,
+  };
+}
+function writeForm(s) {
+  if (!s) return;
+  // 8品すべてに書き込む（渡された品が足りなければ空にする。「すべて消す」はこれで空になる）
+  COURSES.forEach((_, i) => { const v = (s.items || [])[i] || []; $('t'+i).value = v[0] || ''; $('c'+i).value = v[1] || ''; });
+  $('eater').value = s.eater || '';
+  $('rate').value = (s.rate ?? '') === '' ? '' : s.rate;
+}
+function store(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+function restore() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+
+// ── 描く
+const f = (tpl, px) => tpl.replace('{px}', px);
+function fitText(text, x, y, maxW, tpl, size, minSize) {
+  let s = size;
+  ctx.font = f(tpl, s);
+  while (s > minSize && ctx.measureText(text).width > maxW) { s -= 1; ctx.font = f(tpl, s); }
+  if (ctx.measureText(text).width > maxW) { // それでも入らなければ末尾を省く
+    while (text.length && ctx.measureText(text + '…').width > maxW) text = text.slice(0, -1);
+    text += '…';
+  }
+  ctx.fillText(text, x, y);
+}
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); ctx.closePath();
+}
+function divider(y) {
+  ctx.strokeStyle = T.rule; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(130, y); ctx.lineTo(578, y); ctx.moveTo(622, y); ctx.lineTo(1070, y); ctx.stroke();
+  ctx.fillStyle = T.accent; ctx.beginPath(); ctx.moveTo(600, y-7); ctx.lineTo(607, y); ctx.lineTo(600, y+7); ctx.lineTo(593, y); ctx.closePath(); ctx.fill();
+}
+// 地の質感（毎回同じ模様になるよう、固定の種で乱数を回す）
+function grain() {
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 5000; i++) {
+    const x = rnd() * 1200, y = rnd() * 1600, r = rnd() * 1.4 + .3;
+    ctx.fillStyle = `rgba(120,90,50,${rnd()*.06})`;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+  }
+}
+
+function draw(s) {
+  // 地
+  const g = ctx.createRadialGradient(600, 700, 200, 600, 800, 1000);
+  g.addColorStop(0, T.bg); g.addColorStop(1, T.bg2);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 1200, 1600);
+  grain();
+  // 二重の枠
+  ctx.strokeStyle = T.frame; ctx.lineWidth = 3; ctx.strokeRect(34, 34, 1132, 1532);
+  ctx.globalAlpha = .55; ctx.lineWidth = 1.2; ctx.strokeRect(46, 46, 1108, 1508); ctx.globalAlpha = 1;
+  // 題
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = T.accent; ctx.font = "700 22px 'Zen Kaku Gothic New', sans-serif";
+  // 英題と仏語名は筆記体 Pinyon Script（2026-10-27 社長）
+  ctx.font = "400 44px 'Pinyon Script', cursive"; ctx.fillText('Full Course of My TRPG Life', 600, 110);
+  ctx.fillStyle = T.ink; ctx.font = f(T.titleFont, 80); ctx.fillText('TRPG人生のフルコース', 600, 198);
+  ctx.fillStyle = T.sub; ctx.font = "500 22px 'Zen Kaku Gothic New', sans-serif"; ctx.fillText('あなたの卓歴を、八品に。', 600, 238);
+  divider(264);
+  // 8品
+  COURSES.forEach((c, i) => {
+    const y = 292 + i * 144, h = 132;
+    roundRect(78, y, 1044, h, 12); ctx.fillStyle = T.card; ctx.fill();
+    ctx.lineWidth = i === MAIN ? 2.6 : 1.2; ctx.strokeStyle = i === MAIN ? T.mainLine : T.cardLine; ctx.stroke();
+    // 番号の丸
+    ctx.fillStyle = c[2]; ctx.beginPath(); ctx.arc(133, y + 66, 29, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = "700 26px 'Zen Kaku Gothic New', sans-serif"; ctx.fillText(String(i + 1), 133, y + 76);
+    // 品名
+    ctx.textAlign = 'left'; ctx.fillStyle = T.ink; fitText(c[0], 186, y + 56, 290, T.bodyFont, 34, 22);
+    ctx.fillStyle = T.sub; ctx.font = "400 28px 'Pinyon Script', cursive"; ctx.fillText(c[1], 188, y + 96);
+    // 記入欄（2行）
+    ctx.strokeStyle = T.rule; ctx.lineWidth = 1.5;
+    [56, 102].forEach(o => { ctx.beginPath(); ctx.moveTo(498, y + o); ctx.lineTo(1088, y + o); ctx.stroke(); });
+    const [t, cm] = s.items[i] || ['', ''];
+    ctx.fillStyle = T.write;
+    if (t) fitText(t, 504, y + 46, 578, T.textFont.replace('500', '700'), 28, 16);
+    if (cm) fitText(cm, 504, y + 92, 578, T.textFont.replace('500', '700'), 26, 15);
+  });
+  // 下の欄
+  divider(1462);
+  ctx.textAlign = 'left'; ctx.fillStyle = T.sub; ctx.font = "700 20px 'Zen Kaku Gothic New', sans-serif";
+  ctx.fillText('食べ手', 80, 1512); ctx.fillText('フルコース完成度', 640, 1512);
+  ctx.strokeStyle = T.rule; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(156, 1524); ctx.lineTo(568, 1524); ctx.moveTo(812, 1524); ctx.lineTo(978, 1524); ctx.stroke();
+  ctx.fillStyle = T.write;
+  if (s.eater) fitText(s.eater, 166, 1512, 396, T.textFont.replace('500', '700'), 26, 15);
+  if (s.rate !== '' && s.rate != null) {
+    const v = Math.max(0, Math.min(100, Math.round(Number(s.rate))));
+    ctx.textAlign = 'center'; ctx.font = f(T.textFont.replace('500', '700'), 28); ctx.fillText(isNaN(v) ? '' : String(v), 895, 1512);
+  }
+  ctx.textAlign = 'left'; ctx.fillStyle = T.sub; ctx.font = "700 24px 'Zen Kaku Gothic New', sans-serif"; ctx.fillText('%', 988, 1512);
+}
+
+function update() { const s = readForm(); store(s); draw(s); }
+
+// ── 書体を読み込んでから描く（読み込めなくても代わりの書体で描く）
+async function start() {
+  writeForm(restore());
+  try {
+    await Promise.all([
+      "800 80px 'Shippori Mincho'", "700 34px 'Shippori Mincho'", "500 22px 'Shippori Mincho'",
+      "700 22px 'Zen Kaku Gothic New'", "500 22px 'Zen Kaku Gothic New'", "400 44px 'Pinyon Script'",
+    ].map(x => document.fonts.load(x, 'TRPG人生のフルコース食べ手完成度')));
+  } catch (e) {}
+  draw(readForm());
+}
+document.getElementById('f').addEventListener('input', update);
+$('sample').addEventListener('click', () => { writeForm(SAMPLE); update(); });
+$('clear').addEventListener('click', () => {
+  if (!confirm('書いた内容をすべて消します。よろしいですか？')) return;
+  writeForm({ items: [], eater: '', rate: '' }); update();
+});
+// ── 画像にする・保存する
+const FILE_NAME = 'TRPG人生のフルコース.png';
+function makeBlob() { draw(readForm()); return new Promise(r => cv.toBlob(r, 'image/png')); }
+function saveBlob(b) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = FILE_NAME;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+$('save').addEventListener('click', async () => saveBlob(await makeBlob()));
+
+// ── Xに投稿（2026-10-27）
+// Xの投稿画面を開くリンクは、文・ハッシュタグ・URLは渡せるが画像は渡せない。そこで
+//   スマホ（指で触る端末で、共有に対応しているとき）→ 共有シートに画像と文を渡す。Xアプリを選べば画像付きになる
+//   それ以外 → 画像をクリップボードにコピーしてから、文の入った投稿画面を開く。貼るのは本人（Ctrl+V）
+//   コピーできなかったとき → 画像を保存してから投稿画面を開く。添付は本人
+const SHARE_TEXT = 'わたしのTRPG人生のフルコース';
+const SHARE_TAG  = 'TRPG人生のフルコース';
+const SHARE_URL  = 'https://futakad.github.io/trpg-fullcourse/';
+const intentUrl = () => 'https://x.com/intent/post?' + new URLSearchParams({ text: SHARE_TEXT, hashtags: SHARE_TAG, url: SHARE_URL });
+const say = t => { $('shareMsg').textContent = t; };
+$('share').addEventListener('click', async () => {
+  const blobP = makeBlob();
+  if (matchMedia('(pointer: coarse)').matches && navigator.canShare) {
+    const data = { files: [new File([await blobP], FILE_NAME, { type: 'image/png' })], text: `${SHARE_TEXT} #${SHARE_TAG} ${SHARE_URL}` };
+    if (navigator.canShare(data)) {
+      try { await navigator.share(data); say(''); return; }
+      catch (e) { if (e.name === 'AbortError') return; } // 共有をやめたときは何もしない
+    }
+  }
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blobP })]);
+    say('画像をコピーしました。開いたXの投稿画面で Ctrl+V（Macは ⌘+V）を押して、画像を貼ってください。');
+  } catch (e) {
+    saveBlob(await blobP);
+    say('画像を保存しました。開いたXの投稿画面で、保存した画像を添付してください。');
+  }
+  window.open(intentUrl(), '_blank', 'noopener');
+});start();
+</script>
+</body>
+</html>
