@@ -13,6 +13,6 @@
 
 ダウンロード版（手元のパソコンで使う版）は BOOTH で配布しています → https://futakad.booth.pm/
 
-制作：ふたかど重工（めるぐ魔法書店［ふたかど］）　X [@futakad](https://x.com/futakad)
+制作：ふたかど重工　X [@futakad](https://x.com/futakad)
 
 このリポジトリのコードとデザインの著作権はふたかど重工に帰属します（オープンソースではありません）。
