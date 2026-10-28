@@ -11,7 +11,7 @@
 - 入力フォームそのものの再配布・販売、何も書いていない画像をテンプレートとして配ること、生成AIの学習データとしての利用はご遠慮ください。詳しくは [利用規約.txt](利用規約.txt)
 - 書体：Shippori Mincho・Pinyon Script・Zen Kaku Gothic New（いずれも SIL Open Font License 1.1）→ [権利表記.txt](権利表記.txt)
 
-ダウンロード版（手元のパソコンで使う版）は BOOTH で配布しています → https://futakad.booth.pm/
+ダウンロード版（手元のパソコンで使う版）は BOOTH で配布しています → https://futakad.booth.pm/items/9059395
 
 制作：ふたかど重工　X [@futakad](https://x.com/futakad)
 
